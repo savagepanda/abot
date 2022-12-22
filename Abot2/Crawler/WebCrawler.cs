@@ -238,7 +238,7 @@ namespace Abot2.Crawler
             }
             finally
             {
-                _threadManager?.Dispose();
+                //_threadManager?.Dispose();
             }
 
             _timeoutTimer?.Stop();
@@ -364,7 +364,7 @@ namespace Abot2.Crawler
                     Log.Debug("Waiting for links to be scheduled...");
 
                     //Beware of issues here... https://github.com/sjdirect/abot/issues/203
-                    await Task.Delay(2500).ConfigureAwait(false);
+                    await Task.Delay(1000).ConfigureAwait(false);
                 }
             }
         }
@@ -822,22 +822,28 @@ namespace Abot2.Crawler
             return decision;
         }
 
+        protected bool printedConfigValues = false;
         protected virtual void PrintConfigValues(CrawlConfiguration config)
         {
-            Log.Information("Configuration Values:");
-
-            var indentString = new string(' ', 2);
-            var abotVersion = Assembly.GetAssembly(this.GetType()).GetName().Version.ToString();
-            Log.Information("{0}Abot Version: {1}", indentString, abotVersion);
-            foreach (var property in config.GetType().GetProperties())
+            if (printedConfigValues == false)
             {
-                if (property.Name != "ConfigurationExtensions")
-                    Log.Information("{0}{1}: {2}", indentString, property.Name, property.GetValue(config, null));
-            }
+                printedConfigValues = true;
 
-            foreach (var key in config.ConfigurationExtensions.Keys)
-            {
-                Log.Information("{0}{1}: {2}", indentString, key, config.ConfigurationExtensions[key]);
+                Log.Information("Configuration Values:");
+
+                var indentString = new string(' ', 2);
+                var abotVersion = Assembly.GetAssembly(this.GetType()).GetName().Version.ToString();
+                Log.Information("{0}Abot Version: {1}", indentString, abotVersion);
+                foreach (var property in config.GetType().GetProperties())
+                {
+                    if (property.Name != "ConfigurationExtensions")
+                        Log.Information("{0}{1}: {2}", indentString, property.Name, property.GetValue(config, null));
+                }
+
+                foreach (var key in config.ConfigurationExtensions.Keys)
+                {
+                    Log.Information("{0}{1}: {2}", indentString, key, config.ConfigurationExtensions[key]);
+                }
             }
         }
 
