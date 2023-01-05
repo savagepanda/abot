@@ -12,6 +12,7 @@ using Abot2.Util;
 using Timer = System.Timers.Timer;
 using Serilog;
 using Serilog.Events;
+using System.Linq;
 
 namespace Abot2.Crawler
 {
@@ -182,6 +183,21 @@ namespace Abot2.Crawler
         #endregion Constructors
 
         #region Public Methods
+
+        public virtual Task<CrawlResult> CrawlAsync(IEnumerable<Uri> crawlList)
+        {
+            foreach(var hyperLink in crawlList)
+            {
+                var page = new PageToCrawl(hyperLink);
+                page.ParentUri = hyperLink;
+                page.IsRoot = true;
+                page.IsInternal = true;
+                _scheduler.Add(page);
+            }
+
+            var firstItem = crawlList.First();
+            return CrawlAsync(firstItem);
+        }
 
         /// <inheritdoc />
         public virtual Task<CrawlResult> CrawlAsync(Uri uri) => CrawlAsync(uri, null);

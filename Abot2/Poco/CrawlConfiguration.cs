@@ -12,12 +12,12 @@ namespace Abot2.Poco
             MaxPagesToCrawl = 1000;
             DownloadableContentTypes = "text/html";
             ConfigurationExtensions = new Dictionary<string, string>();
-            MaxRobotsDotTextCrawlDelayInSeconds = 5;
+            MaxRobotsDotTextCrawlDelayInSeconds = 500;
             HttpRequestMaxAutoRedirects = 7;
             IsHttpRequestAutoRedirectsEnabled = true;
             MaxCrawlDepth = 100;
             HttpServicePointConnectionLimit = 200;
-            HttpRequestTimeoutInSeconds = 15;
+            HttpRequestTimeoutInSeconds = 30;
             IsSslCertificateValidationEnabled = false;
         }
 
