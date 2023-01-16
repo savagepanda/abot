@@ -302,8 +302,10 @@ namespace Abot2.Crawler
         {
             try
             {
-                var threadSafeEvent = PageCrawlStarting;
-                threadSafeEvent?.Invoke(this, new PageCrawlStartingArgs(_crawlContext, pageToCrawl));
+                if (PageCrawlStarting != null)
+                {
+                    PageCrawlStarting(this, new PageCrawlStartingArgs(_crawlContext, pageToCrawl));
+                }
             }
             catch (Exception e)
             {
@@ -316,8 +318,10 @@ namespace Abot2.Crawler
         {
             try
             {
-                var threadSafeEvent = PageCrawlCompleted;
-                threadSafeEvent?.Invoke(this, new PageCrawlCompletedArgs(_crawlContext, crawledPage));
+                if (PageCrawlCompleted != null)
+                {
+                    PageCrawlCompleted(this, new PageCrawlCompletedArgs(_crawlContext, crawledPage));
+                }
             }
             catch (Exception e)
             {
@@ -330,8 +334,10 @@ namespace Abot2.Crawler
         {
             try
             {
-                var threadSafeEvent = PageCrawlDisallowed;
-                threadSafeEvent?.Invoke(this, new PageCrawlDisallowedArgs(_crawlContext, pageToCrawl, reason));
+                if (PageCrawlDisallowed != null)
+                {
+                    PageCrawlDisallowed(this, new PageCrawlDisallowedArgs(_crawlContext, pageToCrawl, reason));
+                }
             }
             catch (Exception e)
             {
@@ -344,8 +350,10 @@ namespace Abot2.Crawler
         {
             try
             {
-                var threadSafeEvent = PageLinksCrawlDisallowed;
-                threadSafeEvent?.Invoke(this, new PageLinksCrawlDisallowedArgs(_crawlContext, crawledPage, reason));
+                if (PageLinksCrawlDisallowed == null)
+                {
+                    PageLinksCrawlDisallowed(this, new PageLinksCrawlDisallowedArgs(_crawlContext, crawledPage, reason));
+                }
             }
             catch (Exception e)
             {
@@ -414,6 +422,10 @@ namespace Abot2.Crawler
                 if (PageSizeIsAboveMax(crawledPage))
                     return;
 
+                //fire this event before scheduling page links,
+                //due to bug that the event happens at end of the crawl cycle otherwise.
+                FirePageCrawlCompletedEvent(crawledPage);
+
                 ThrowIfCancellationRequested();
 
                 var shouldCrawlPageLinks = ShouldCrawlPageLinks(crawledPage);
@@ -425,9 +437,7 @@ namespace Abot2.Crawler
                 if (shouldCrawlPageLinks)
                     SchedulePageLinks(crawledPage);
 
-                ThrowIfCancellationRequested();
-
-                FirePageCrawlCompletedEvent(crawledPage);
+                ThrowIfCancellationRequested();                
 
                 if (ShouldRecrawlPage(crawledPage))
                 {
