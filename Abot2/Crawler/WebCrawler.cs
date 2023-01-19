@@ -350,7 +350,7 @@ namespace Abot2.Crawler
         {
             try
             {
-                if (PageLinksCrawlDisallowed == null)
+                if (PageLinksCrawlDisallowed != null)
                 {
                     PageLinksCrawlDisallowed(this, new PageLinksCrawlDisallowedArgs(_crawlContext, crawledPage, reason));
                 }
